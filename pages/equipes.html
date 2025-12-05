@@ -1,40 +1,857 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equipes - SCPE</title>
     <link rel="stylesheet" href="../global.css">
+    <style>
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            color: #1e293b;
+            margin: 0;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            color: #64748b;
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            color: #2563eb;
+        }
+
+        .tab.active {
+            color: #2563eb;
+            border-bottom-color: #2563eb;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .action-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .button-primary {
+            background: #2563eb;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+
+        .button-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .button-secondary {
+            background: white;
+            color: #475569;
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .button-secondary:hover {
+            background: #f8fafc;
+            border-color: #94a3b8;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            max-width: 400px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 16px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        thead {
+            background: #f8fafc;
+        }
+
+        th {
+            text-align: left;
+            padding: 12px 16px;
+            font-weight: 600;
+            color: #475569;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 14px 16px;
+            border-top: 1px solid #e2e8f0;
+            color: #334155;
+        }
+
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge-admin {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-manager {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-user {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .badge-success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-icon {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 4px;
+            color: #64748b;
+            transition: all 0.2s;
+            font-size: 16px;
+        }
+
+        .btn-icon:hover {
+            background: #f1f5f9;
+            color: #2563eb;
+        }
+
+        .btn-icon.delete:hover {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 1px 4px #00000022;
+            border-left: 4px solid #2563eb;
+        }
+
+        .stat-card h3 {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #94a3b8;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #475569;
+            margin-bottom: 6px;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+            color: #1e293b;
+            margin: 0;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #64748b;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+        }
+
+        .close-modal:hover {
+            color: #1e293b;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .project-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .project-tag {
+            background: #f1f5f9;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #475569;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+    </style>
 </head>
 <body>
     <div class="header">
-    <span class="header-title">
-        Sistema de Controle de Projetos em Equipe – Protótipo
-    </span>
-</div>
-
-  <div class="sidebar">
-    <a href="../index.html">🏠 Início</a>
-    <a href="equipes.html">👥 Equipes</a>
-    <a href="usuarios.html">👤 Usuários</a>
-    <a href="projetos.html">📁 Projetos</a>
-    <a href="tarefas.html">📌 Tarefas</a>
-    <a href="comunicacao.html">💬 Comunicação</a>
-    <a href="orcamento.html">💰 Orçamento</a>
-    <a href="relatorios.html">📊 Relatórios</a>
-</div>
-
-<div class="content">
-    <h2>Gerenciamento de Equipes</h2>
-
-    <div class="card">
-        <h3>Criar / Editar Cargos</h3>
-        <button class="button">Novo Cargo</button>
+        <span class="header-title">
+            Sistema de Controle de Projetos em Equipe – Protótipo
+        </span>
     </div>
 
-    <div class="card">
-        <h3>Adicionar Usuários ao Projeto</h3>
-        <button class="button">Adicionar Usuário</button>
+    <div class="sidebar">
+        <a href="../index.html">🏠 Início</a>
+        <a href="equipes.html" style="background: #1e293b; color: #fff;">👥 Equipes</a>
+        <a href="usuarios.html">👤 Usuários</a>
+        <a href="projetos.html">📁 Projetos</a>
+        <a href="tarefas.html">📌 Tarefas</a>
+        <a href="comunicacao.html">💬 Comunicação</a>
+        <a href="orcamento.html">💰 Orçamento</a>
+        <a href="relatorios.html">📊 Relatórios</a>
     </div>
-</div>
 
+    <div class="content">
+        <div class="page-header">
+            <h1>👥 Gerenciamento de Equipes</h1>
+        </div>
+
+        <!-- Estatísticas -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total de Usuários</h3>
+                <div class="value">24</div>
+            </div>
+            <div class="stat-card" style="border-left-color: #10b981;">
+                <h3>Projetos Ativos</h3>
+                <div class="value">8</div>
+            </div>
+            <div class="stat-card" style="border-left-color: #f59e0b;">
+                <h3>Cargos Cadastrados</h3>
+                <div class="value">12</div>
+            </div>
+        </div>
+
+        <!-- Tabs de navegação -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('usuarios')">
+                👤 Usuários
+            </button>
+            <button class="tab" onclick="switchTab('cargos')">
+                💼 Cargos
+            </button>
+            <button class="tab" onclick="switchTab('projetos')">
+                📁 Projetos e Equipes
+            </button>
+        </div>
+
+        <!-- Tab: Usuários -->
+        <div id="tab-usuarios" class="tab-content active">
+            <div class="card">
+                <div class="action-bar">
+                    <button class="button-primary" onclick="openModal('modalNovoUsuario')">
+                        ➕ Novo Usuário
+                    </button>
+                    <div class="search-box">
+                        <input type="text" placeholder="🔍 Buscar usuário por nome ou e-mail...">
+                    </div>
+                    <button class="button-secondary">
+                        ⬇️ Exportar
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>E-mail</th>
+                                <th>Papel</th>
+                                <th>Cargo</th>
+                                <th>Remuneração</th>
+                                <th>Projetos</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>João Silva</strong></td>
+                                <td>joao.silva@empresa.com</td>
+                                <td><span class="badge badge-admin">Administrador</span></td>
+                                <td>-</td>
+                                <td>R$ 12.000,00</td>
+                                <td>-</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon" title="Editar">✏️</button>
+                                        <button class="btn-icon delete" title="Excluir">🗑️</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Ana Costa</strong></td>
+                                <td>ana.costa@empresa.com</td>
+                                <td><span class="badge badge-manager">Gerente de Projeto</span></td>
+                                <td>Product Manager</td>
+                                <td>R$ 10.000,00</td>
+                                <td>
+                                    <div class="project-list">
+                                        <span class="project-tag">Sistema ERP</span>
+                                        <span class="project-tag">App Mobile</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon" title="Editar">✏️</button>
+                                        <button class="btn-icon delete" title="Excluir">🗑️</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Carlos Mendes</strong></td>
+                                <td>carlos.mendes@empresa.com</td>
+                                <td><span class="badge badge-user">Usuário</span></td>
+                                <td>Desenvolvedor Sênior</td>
+                                <td>R$ 8.500,00</td>
+                                <td>
+                                    <div class="project-list">
+                                        <span class="project-tag">Sistema ERP</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon" title="Editar">✏️</button>
+                                        <button class="btn-icon delete" title="Excluir">🗑️</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Mariana Souza</strong></td>
+                                <td>mariana.souza@empresa.com</td>
+                                <td><span class="badge badge-user">Usuário</span></td>
+                                <td>Designer UX/UI</td>
+                                <td>R$ 7.000,00</td>
+                                <td>
+                                    <div class="project-list">
+                                        <span class="project-tag">App Mobile</span>
+                                        <span class="project-tag">Portal Web</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon" title="Editar">✏️</button>
+                                        <button class="btn-icon delete" title="Excluir">🗑️</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Cargos -->
+        <div id="tab-cargos" class="tab-content">
+            <div class="card">
+                <div class="action-bar">
+                    <button class="button-primary" onclick="openModal('modalNovoCargo')">
+                        ➕ Novo Cargo
+                    </button>
+                    <div class="search-box">
+                        <input type="text" placeholder="🔍 Buscar cargo...">
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Cargo</th>
+                                <th>Projeto</th>
+                                <th>Usuários Alocados</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Product Manager</strong></td>
+                                <td>Sistema ERP</td>
+                                <td>1 usuário</td>
+                                <td><span class="badge badge-success">Ativo</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon" title="Editar">✏️</button>
+                                        <button class="btn-icon delete" title="Excluir">🗑️</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Desenvolvedor Sênior</strong></td>
+                                <td>Sistema ERP</td>
+                                <td>3 usuários</td>
+                                <td><span class="badge badge-success">Ativo</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon" title="Editar">✏️</button>
+                                        <button class="btn-icon delete" title="Excluir">🗑️</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Designer UX/UI</strong></td>
+                                <td>App Mobile</td>
+                                <td>2 usuários</td>
+                                <td><span class="badge badge-success">Ativo</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon" title="Editar">✏️</button>
+                                        <button class="btn-icon delete" title="Excluir">🗑️</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Analista de Testes</strong></td>
+                                <td>Portal Web</td>
+                                <td>0 usuários</td>
+                                <td><span class="badge badge-warning">Vago</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon" title="Editar">✏️</button>
+                                        <button class="btn-icon delete" title="Excluir">🗑️</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Projetos e Equipes -->
+        <div id="tab-projetos" class="tab-content">
+            <div class="card">
+                <div class="action-bar">
+                    <button class="button-primary" onclick="openModal('modalNovoProjeto')">
+                        ➕ Novo Projeto
+                    </button>
+                    <div class="search-box">
+                        <input type="text" placeholder="🔍 Buscar projeto...">
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Projeto</th>
+                                <th>Gerente</th>
+                                <th>Membros da Equipe</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Sistema ERP</strong></td>
+                                <td>Ana Costa</td>
+                                <td>6 membros</td>
+                                <td><span class="badge badge-success">Em andamento</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon" title="Ver Equipe">👥</button>
+                                        <button class="btn-icon" title="Adicionar Membro">➕</button>
+                                        <button class="btn-icon" title="Editar">✏️</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>App Mobile</strong></td>
+                                <td>Ana Costa</td>
+                                <td>4 membros</td>
+                                <td><span class="badge badge-success">Em andamento</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon" title="Ver Equipe">👥</button>
+                                        <button class="btn-icon" title="Adicionar Membro">➕</button>
+                                        <button class="btn-icon" title="Editar">✏️</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Portal Web</strong></td>
+                                <td>João Silva</td>
+                                <td>3 membros</td>
+                                <td><span class="badge badge-warning">Planejamento</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon" title="Ver Equipe">👥</button>
+                                        <button class="btn-icon" title="Adicionar Membro">➕</button>
+                                        <button class="btn-icon" title="Editar">✏️</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Novo Usuário -->
+    <div id="modalNovoUsuario" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Cadastrar Novo Usuário</h2>
+                <button class="close-modal" onclick="closeModal('modalNovoUsuario')">×</button>
+            </div>
+            
+            <form>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nome Completo *</label>
+                        <input type="text" placeholder="Digite o nome completo" required>
+                    </div>
+                    <div class="form-group">
+                        <label>E-mail *</label>
+                        <input type="email" placeholder="usuario@empresa.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Papel no Sistema *</label>
+                        <select required>
+                            <option value="">Selecione...</option>
+                            <option value="admin">Administrador</option>
+                            <option value="gerente">Gerente de Projeto</option>
+                            <option value="usuario">Usuário Comum</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Remuneração (R$)</label>
+                        <input type="number" placeholder="0,00" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Projeto</label>
+                        <select>
+                            <option value="">Nenhum projeto</option>
+                            <option value="1">Sistema ERP</option>
+                            <option value="2">App Mobile</option>
+                            <option value="3">Portal Web</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Cargo no Projeto</label>
+                        <select>
+                            <option value="">Selecione um projeto primeiro</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="button-secondary" onclick="closeModal('modalNovoUsuario')">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="button-primary">
+                        Salvar Usuário
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Novo Cargo -->
+    <div id="modalNovoCargo" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Criar Novo Cargo</h2>
+                <button class="close-modal" onclick="closeModal('modalNovoCargo')">×</button>
+            </div>
+            
+            <form>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nome do Cargo *</label>
+                        <input type="text" placeholder="Ex: Desenvolvedor Full Stack" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Projeto *</label>
+                        <select required>
+                            <option value="">Selecione o projeto</option>
+                            <option value="1">Sistema ERP</option>
+                            <option value="2">App Mobile</option>
+                            <option value="3">Portal Web</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>Descrição</label>
+                        <textarea rows="3" placeholder="Descreva as responsabilidades do cargo..." style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; font-family: Arial, sans-serif;"></textarea>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="button-secondary" onclick="closeModal('modalNovoCargo')">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="button-primary">
+                        Criar Cargo
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Novo Projeto -->
+    <div id="modalNovoProjeto" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Criar Novo Projeto</h2>
+                <button class="close-modal" onclick="closeModal('modalNovoProjeto')">×</button>
+            </div>
+            
+            <form>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nome do Projeto *</label>
+                        <input type="text" placeholder="Digite o nome do projeto" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Gerente do Projeto *</label>
+                        <select required>
+                            <option value="">Selecione o gerente</option>
+                            <option value="1">Ana Costa</option>
+                            <option value="2">João Silva</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>Descrição</label>
+                        <textarea rows="3" placeholder="Descreva o projeto..." style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; font-family: Arial, sans-serif;"></textarea>
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>Adicionar Membros à Equipe</label>
+                        <select multiple style="height: 120px;">
+                            <option value="1">Carlos Mendes - Desenvolvedor Sênior</option>
+                            <option value="2">Mariana Souza - Designer UX/UI</option>
+                            <option value="3">Pedro Santos - Desenvolvedor Junior</option>
+                            <option value="4">Julia Oliveira - Analista de Testes</option>
+                        </select>
+                        <small style="color: #64748b; font-size: 12px; margin-top: 4px;">Segure Ctrl/Cmd para selecionar múltiplos membros</small>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="button-secondary" onclick="closeModal('modalNovoProjeto')">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="button-primary">
+                        Criar Projeto
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Add active class to selected tab
+            event.target.classList.add('active');
+            document.getElementById('tab-' + tabName).classList.add('active');
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        }
+    </script>
 </body>
 </html>

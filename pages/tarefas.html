@@ -1,60 +1,1469 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarefas - SCPE</title>
     <link rel="stylesheet" href="../global.css">
+    <style>
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            color: #1e293b;
+            margin: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .project-selector {
+            padding: 10px 16px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            background: white;
+            cursor: pointer;
+        }
+
+        .project-selector:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .button-primary {
+            background: #2563eb;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+
+        .button-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .button-secondary {
+            background: white;
+            color: #475569;
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .button-secondary:hover {
+            background: #f8fafc;
+            border-color: #94a3b8;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 4px;
+            background: #f1f5f9;
+            padding: 4px;
+            border-radius: 8px;
+        }
+
+        .view-btn {
+            background: transparent;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #64748b;
+            transition: all 0.2s;
+        }
+
+        .view-btn.active {
+            background: white;
+            color: #2563eb;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 16px 20px;
+            border-radius: 8px;
+            box-shadow: 0px 1px 4px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .stat-icon {
+            font-size: 24px;
+        }
+
+        .stat-info span {
+            display: block;
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .stat-info strong {
+            font-size: 20px;
+            color: #1e293b;
+        }
+
+        .filters-bar {
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0px 1px 4px rgba(0,0,0,0.08);
+        }
+
+        .filter-label {
+            font-size: 14px;
+            color: #475569;
+            font-weight: 500;
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 13px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        /* Kanban Board */
+        .kanban-board {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            padding-bottom: 20px;
+            min-height: 600px;
+        }
+
+        .kanban-column {
+            flex: 1;
+            min-width: 300px;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 16px;
+            max-height: calc(100vh - 300px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .column-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .column-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 15px;
+        }
+
+        .column-count {
+            background: #e2e8f0;
+            color: #475569;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .column-tasks {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .task-card {
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 4px solid #cbd5e1;
+        }
+
+        .task-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        .task-card.priority-low {
+            border-left-color: #10b981;
+        }
+
+        .task-card.priority-medium {
+            border-left-color: #f59e0b;
+        }
+
+        .task-card.priority-high {
+            border-left-color: #ef4444;
+        }
+
+        .task-card.priority-critical {
+            border-left-color: #7c2d12;
+        }
+
+        .task-title {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 8px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .task-description {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .task-meta {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .task-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .badge-priority-low {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-priority-medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-priority-high {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-priority-critical {
+            background: #7c2d12;
+            color: white;
+        }
+
+        .task-tech {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .tech-tag {
+            background: #e0e7ff;
+            color: #3730a3;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .task-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 12px;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .task-assignees {
+            display: flex;
+            align-items: center;
+        }
+
+        .assignee-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 10px;
+            font-weight: 600;
+            border: 2px solid white;
+            margin-left: -8px;
+        }
+
+        .assignee-avatar:first-child {
+            margin-left: 0;
+        }
+
+        .task-dates {
+            font-size: 11px;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .task-comments {
+            font-size: 11px;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            max-width: 900px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            display: flex;
+        }
+
+        .modal-main {
+            flex: 1;
+            padding: 30px;
+        }
+
+        .modal-sidebar {
+            width: 280px;
+            background: #f8fafc;
+            padding: 30px 20px;
+            border-left: 1px solid #e2e8f0;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 24px;
+        }
+
+        .modal-header h2 {
+            font-size: 24px;
+            color: #1e293b;
+            margin: 0;
+            flex: 1;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #64748b;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+        }
+
+        .close-modal:hover {
+            color: #1e293b;
+        }
+
+        .form-section {
+            margin-bottom: 24px;
+        }
+
+        .form-section h3 {
+            font-size: 14px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #475569;
+            margin-bottom: 6px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .sidebar-section {
+            margin-bottom: 24px;
+        }
+
+        .sidebar-section h4 {
+            font-size: 13px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .sidebar-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+
+        .sidebar-item label {
+            color: #64748b;
+        }
+
+        .sidebar-item .value {
+            color: #1e293b;
+            font-weight: 500;
+        }
+
+        .comments-section {
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .comments-section h3 {
+            font-size: 18px;
+            color: #1e293b;
+            margin-bottom: 16px;
+        }
+
+        .comment-input {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .comment-input textarea {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .comment-item {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+
+        .comment-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .comment-content {
+            flex: 1;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 14px;
+        }
+
+        .comment-time {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .comment-text {
+            color: #475569;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .list-view {
+            display: none;
+        }
+
+        .list-view.active {
+            display: block;
+        }
+
+        .list-view table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .list-view thead {
+            background: #f8fafc;
+        }
+
+        .list-view th {
+            text-align: left;
+            padding: 12px 16px;
+            font-weight: 600;
+            color: #475569;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .list-view td {
+            padding: 14px 16px;
+            border-top: 1px solid #e2e8f0;
+            color: #334155;
+        }
+
+        .list-view tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .btn-icon {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 4px;
+            color: #64748b;
+            transition: all 0.2s;
+            font-size: 16px;
+        }
+
+        .btn-icon:hover {
+            background: #f1f5f9;
+            color: #2563eb;
+        }
+    </style>
 </head>
 <body>
-
     <div class="header">
-    <span class="header-title">
-        Sistema de Controle de Projetos em Equipe – Protótipo
-    </span>
-</div>
-
-  <div class="sidebar">
-    <a href="../index.html">🏠 Início</a>
-    <a href="equipes.html">👥 Equipes</a>
-    <a href="usuarios.html">👤 Usuários</a>
-    <a href="projetos.html">📁 Projetos</a>
-    <a href="tarefas.html">📌 Tarefas</a>
-    <a href="comunicacao.html">💬 Comunicação</a>
-    <a href="orcamento.html">💰 Orçamento</a>
-    <a href="relatorios.html">📊 Relatórios</a>
-</div>
-
-<div class="content">
-    <h2>Tarefas do Projeto</h2>
-
-    <div class="card">
-        <button class="button">Criar Tarefa</button>
+        <span class="header-title">
+            Sistema de Controle de Projetos em Equipe – Protótipo
+        </span>
     </div>
 
-    <div class="card">
-        <h3>Board</h3>
+    <div class="sidebar">
+        <a href="../index.html">🏠 Início</a>
+        <a href="equipes.html">👥 Equipes</a>
+        <a href="usuarios.html">👤 Usuários</a>
+        <a href="projetos.html">📁 Projetos</a>
+        <a href="tarefas.html" style="background: #1e293b; color: #fff;">📌 Tarefas</a>
+        <a href="comunicacao.html">💬 Comunicação</a>
+        <a href="orcamento.html">💰 Orçamento</a>
+        <a href="relatorios.html">📊 Relatórios</a>
+    </div>
 
+    <div class="content">
+        <div class="page-header">
+            <h1>📌 Gerenciamento de Tarefas</h1>
+            <div class="header-actions">
+                <select class="project-selector">
+                    <option value="1">📁 Sistema ERP</option>
+                    <option value="2">📁 App Mobile</option>
+                    <option value="3">📁 Portal Web</option>
+                    <option value="4">📁 E-commerce</option>
+                </select>
+                <button class="button-primary" onclick="openModal('modalNovaTarefa')">
+                    ➕ Nova Tarefa
+                </button>
+                <button class="button-secondary" onclick="openModal('modalRelatorio')">
+                    📊 Gerar Relatório
+                </button>
+            </div>
+        </div>
 
-        <div style="display:flex; gap:20px;">
-            <div class="card">
-                <h4>Aberta</h4>
-                <p>Tarefa 1</p>
+        <!-- Estatísticas -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <span class="stat-icon">📋</span>
+                <div class="stat-info">
+                    <span>Total de Tarefas</span>
+                    <strong>24</strong>
+                </div>
             </div>
-            <div class="card">
-                <h4>Em desenvolvimento</h4>
-                <p>Tarefa 2</p>
+            <div class="stat-item">
+                <span class="stat-icon">🔄</span>
+                <div class="stat-info">
+                    <span>Em Andamento</span>
+                    <strong>8</strong>
+                </div>
             </div>
-            <div class="card">
-                <h4>Em testes</h4>
-                <p>Tarefa 3</p>
+            <div class="stat-item">
+                <span class="stat-icon">✅</span>
+                <div class="stat-info">
+                    <span>Concluídas</span>
+                    <strong>12</strong>
+                </div>
             </div>
+            <div class="stat-item">
+                <span class="stat-icon">🔥</span>
+                <div class="stat-info">
+                    <span>Prioridade Alta</span>
+                    <strong>5</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="filters-bar">
+            <span class="filter-label">Filtros:</span>
+            <select class="filter-select">
+                <option value="">Todas as Prioridades</option>
+                <option value="low">Baixa</option>
+                <option value="medium">Média</option>
+                <option value="high">Alta</option>
+                <option value="critical">Altíssima</option>
+            </select>
+            <select class="filter-select">
+                <option value="">Todos os Responsáveis</option>
+                <option value="1">Carlos Mendes</option>
+                <option value="2">Mariana Souza</option>
+                <option value="3">Pedro Santos</option>
+            </select>
+            <input type="text" class="search-input" placeholder="🔍 Buscar tarefas...">
+            <div class="view-toggle">
+                <button class="view-btn active" onclick="switchView('board')">📋 Board</button>
+                <button class="view-btn" onclick="switchView('list')">📑 Lista</button>
+            </div>
+        </div>
+
+        <!-- Kanban Board -->
+        <div id="board-view" class="kanban-board">
+            <!-- Coluna: Aberta -->
+            <div class="kanban-column">
+                <div class="column-header">
+                    <div class="column-title">
+                        🆕 Aberta
+                        <span class="column-count">3</span>
+                    </div>
+                </div>
+                <div class="column-tasks">
+                    <div class="task-card priority-high" onclick="openModal('modalDetalheTarefa')">
+                        <div class="task-title">Implementar autenticação JWT</div>
+                        <div class="task-description">Desenvolver sistema de autenticação seguro usando JSON Web Tokens</div>
+                        <div class="task-meta">
+                            <span class="task-badge badge-priority-high">Alta</span>
+                        </div>
+                        <div class="task-tech">
+                            <span class="tech-tag">Node.js</span>
+                            <span class="tech-tag">JWT</span>
+                            <span class="tech-tag">Express</span>
+                        </div>
+                        <div class="task-footer">
+                            <div class="task-assignees">
+                                <div class="assignee-avatar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">CM</div>
+                                <div class="assignee-avatar" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">PS</div>
+                            </div>
+                            <div class="task-dates">📅 05-15 Dez</div>
+                        </div>
+                    </div>
+
+                    <div class="task-card priority-medium">
+                        <div class="task-title">Criar página de dashboard</div>
+                        <div class="task-description">Design e implementação da página inicial com gráficos e estatísticas</div>
+                        <div class="task-meta">
+                            <span class="task-badge badge-priority-medium">Média</span>
+                        </div>
+                        <div class="task-tech">
+                            <span class="tech-tag">React</span>
+                            <span class="tech-tag">Chart.js</span>
+                        </div>
+                        <div class="task-footer">
+                            <div class="task-assignees">
+                                <div class="assignee-avatar" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">MS</div>
+                            </div>
+                            <div class="task-dates">📅 06-12 Dez</div>
+                        </div>
+                    </div>
+
+                    <div class="task-card priority-low">
+                        <div class="task-title">Atualizar documentação da API</div>
+                        <div class="task-description">Revisar e atualizar a documentação dos endpoints da API</div>
+                        <div class="task-meta">
+                            <span class="task-badge badge-priority-low">Baixa</span>
+                        </div>
+                        <div class="task-tech">
+                            <span class="tech-tag">Swagger</span>
+                        </div>
+                        <div class="task-footer">
+                            <div class="task-assignees">
+                                <div class="assignee-avatar" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">CM</div>
+                            </div>
+                            <div class="task-dates">📅 08-20 Dez</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coluna: Em Desenvolvimento -->
+            <div class="kanban-column">
+                <div class="column-header">
+                    <div class="column-title">
+                        💻 Em Desenvolvimento
+                        <span class="column-count">4</span>
+                    </div>
+                </div>
+                <div class="column-tasks">
+                    <div class="task-card priority-critical">
+                        <div class="task-title">Corrigir bug crítico no pagamento</div>
+                        <div class="task-description">Resolver problema de duplicação de cobranças no módulo de pagamentos</div>
+                        <div class="task-meta">
+                            <span class="task-badge badge-priority-critical">Altíssima</span>
+                        </div>
+                        <div class="task-tech">
+                            <span class="tech-tag">Python</span>
+                            <span class="tech-tag">Django</span>
+                            <span class="tech-tag">Stripe</span>
+                        </div>
+                        <div class="task-footer">
+                            <div class="task-assignees">
+                                <div class="assignee-avatar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">CM</div>
+                            </div>
+                            <div class="task-dates">📅 04-06 Dez</div>
+                        </div>
+                    </div>
+
+                    <div class="task-card priority-high">
+                        <div class="task-title">Implementar upload de arquivos</div>
+                        <div class="task-description">Criar funcionalidade para upload e gerenciamento de arquivos com validação</div>
+                        <div class="task-meta">
+                            <span class="task-badge badge-priority-high">Alta</span>
+                        </div>
+                        <div class="task-tech">
+                            <span class="tech-tag">Node.js</span>
+                            <span class="tech-tag">Multer</span>
+                            <span class="tech-tag">AWS S3</span>
+                        </div>
+                        <div class="task-footer">
+                            <div class="task-assignees">
+                                <div class="assignee-avatar" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">PS</div>
+                            </div>
+                            <div class="task-dates">📅 05-10 Dez</div>
+                        </div>
+                    </div>
+
+                    <div class="task-card priority-medium">
+                        <div class="task-title">Design do sistema de notificações</div>
+                        <div class="task-description">Criar componentes visuais para notificações em tempo real</div>
+                        <div class="task-meta">
+                            <span class="task-badge badge-priority-medium">Média</span>
+                        </div>
+                        <div class="task-tech">
+                            <span class="tech-tag">Figma</span>
+                            <span class="tech-tag">React</span>
+                        </div>
+                        <div class="task-footer">
+                            <div class="task-assignees">
+                                <div class="assignee-avatar" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">MS</div>
+                            </div>
+                            <div class="task-dates">📅 06-11 Dez</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coluna: Em Testes -->
+            <div class="kanban-column">
+                <div class="column-header">
+                    <div class="column-title">
+                        🧪 Em Testes
+                        <span class="column-count">2</span>
+                    </div>
+                </div>
+                <div class="column-tasks">
+                    <div class="task-card priority-high">
+                        <div class="task-title">Sistema de busca avançada</div>
+                        <div class="task-description">Implementar filtros e ordenação na busca de produtos</div>
+                        <div class="task-meta">
+                            <span class="task-badge badge-priority-high">Alta</span>
+                        </div>
+                        <div class="task-tech">
+                            <span class="tech-tag">Elasticsearch</span>
+                            <span class="tech-tag">Node.js</span>
+                        </div>
+                        <div class="task-footer">
+                            <div class="task-assignees">
+                                <div class="assignee-avatar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">CM</div>
+                                <div class="assignee-avatar" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">JO</div>
+                            </div>
+                            <div class="task-dates">📅 01-08 Dez</div>
+                        </div>
+                    </div>
+
+                    <div class="task-card priority-medium">
+                        <div class="task-title">Responsividade mobile</div>
+                        <div class="task-description">Adaptar interface para dispositivos móveis e tablets</div>
+                        <div class="task-meta">
+                            <span class="task-badge badge-priority-medium">Média</span>
+                        </div>
+                        <div class="task-tech">
+                            <span class="tech-tag">CSS</span>
+                            <span class="tech-tag">React Native</span>
+                        </div>
+                        <div class="task-footer">
+                            <div class="task-assignees">
+                                <div class="assignee-avatar" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">MS</div>
+                            </div>
+                            <div class="task-dates">📅 02-09 Dez</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coluna: Em Revisão -->
+            <div class="kanban-column">
+                <div class="column-header">
+                    <div class="column-title">
+                        👁️ Em Revisão
+                        <span class="column-count">3</span>
+                    </div>
+                </div>
+                <div class="column-tasks">
+                    <div class="task-card priority-high">
+                        <div class="task-title">Integração com gateway de pagamento</div>
+                        <div class="task-description">Conectar sistema com Stripe para processar pagamentos</div>
+                        <div class="task-meta">
+                            <span class="task-badge badge-priority-high">Alta</span>
+                        </div>
+                        <div class="task-tech">
+                            <span class="tech-tag">Stripe API</span>
+                            <span class="tech-tag">Node.js</span>
+                        </div>
+                        <div class="task-footer">
+                            <div class="task-assignees">
+                                <div class="assignee-avatar" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">PS</div>
+                            </div>
+                            <div class="task-dates">📅 28 Nov-05 Dez</div>
+                        </div>
+                    </div>
+
+                    <div class="task-card priority-low">
+                        <div class="task-title">Melhorias de acessibilidade</div>
+                        <div class="task-description">Implementar ARIA labels e navegação por teclado</div>
+                        <div class="task-meta">
+                            <span class="task-badge badge-priority-low">Baixa</span>
+                        </div>
+                        <div class="task-tech">
+                            <span class="tech-tag">HTML</span>
+                            <span class="tech-tag">ARIA</span>
+                        </div>
+                        <div class="task-footer">
+                            <div class="task-assignees">
+                                <div class="assignee-avatar" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">MS</div>
+                            </div>
+                            <div class="task-dates">📅 01-10 Dez</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coluna: Concluída -->
+            <div class="kanban-column">
+                <div class="column-header">
+                    <div class="column-title">
+                        ✅ Concluída
+                        <span class="column-count">12</span>
+                    </div>
+                </div>
+                <div class="column-tasks">
+                    <div class="task-card priority-high">
+                        <div class="task-title">Sistema de login</div>
+                        <div class="task-description">Implementar autenticação de usuários com email e senha</div>
+                        <div class="task-meta">
+                            <span class="task-badge badge-priority-high">Alta</span>
+                        </div>
+                        <div class="task-tech">
+                            <span class="tech-tag">React</span>
+                            <span class="tech-tag">Firebase</span>
+                        </div>
+                        <div class="task-footer">
+                            <div class="task-assignees">
+                                <div class="assignee-avatar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">CM</div>
+                            </div>
+                            <div class="task-dates">✅ Concluído</div>
+                        </div>
+                    </div>
+
+                    <div class="task-card priority-medium">
+                        <div class="task-title">Banco de dados PostgreSQL</div>
+                        <div class="task-description">Configurar e estruturar banco de dados relacional</div>
+                        <div class="task-meta">
+                            <span class="task-badge badge-priority-medium">Média</span>
+                        </div>
+                        <div class="task-tech">
+                            <span class="tech-tag">PostgreSQL</span>
+                            <span class="tech-tag">Prisma</span>
+                        </div>
+                        <div class="task-footer">
+                            <div class="task-assignees">
+                                <div class="assignee-avatar" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">PS</div>
+                            </div>
+                            <div class="task-dates">✅ Concluído</div>
+                        </div>
+                    </div>
+
+                    <div class="task-card priority-low">
+                        <div class="task-title">Logo e identidade visual</div>
+                        <div class="task-description">Criar logo e definir paleta de cores do sistema</div>
+                        <div class="task-meta">
+                            <span class="task-badge badge-priority-low">Baixa</span>
+                        </div>
+                        <div class="task-tech">
+                            <span class="tech-tag">Figma</span>
+                            <span class="tech-tag">Illustrator</span>
+                        </div>
+                        <div class="task-footer">
+                            <div class="task-assignees">
+                                <div class="assignee-avatar" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">MS</div>
+                            </div>
+                            <div class="task-dates">✅ Concluído</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- List View -->
+        <div id="list-view" class="list-view">
             <div class="card">
-                <h4>Concluída</h4>
-                <p>Tarefa finalizada</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tarefa</th>
+                            <th>Status</th>
+                            <th>Prioridade</th>
+                            <th>Responsáveis</th>
+                            <th>Prazo</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Implementar autenticação JWT</strong></td>
+                            <td><span class="task-badge" style="background: #dbeafe; color: #1e40af;">Aberta</span></td>
+                            <td><span class="task-badge badge-priority-high">Alta</span></td>
+                            <td>Carlos M., Pedro S.</td>
+                            <td>15 Dez</td>
+                            <td>
+                                <button class="btn-icon" title="Ver Detalhes">👁️</button>
+                                <button class="btn-icon" title="Editar">✏️</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Corrigir bug crítico no pagamento</strong></td>
+                            <td><span class="task-badge" style="background: #fef3c7; color: #92400e;">Em Desenvolvimento</span></td>
+                            <td><span class="task-badge badge-priority-critical">Altíssima</span></td>
+                            <td>Carlos M.</td>
+                            <td>06 Dez</td>
+                            <td>
+                                <button class="btn-icon" title="Ver Detalhes">👁️</button>
+                                <button class="btn-icon" title="Editar">✏️</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 
-</div>
+    <!-- Modal: Nova Tarefa -->
+    <div id="modalNovaTarefa" class="modal">
+        <div class="modal-content">
+            <div class="modal-main">
+                <div class="modal-header">
+                    <h2>Criar Nova Tarefa</h2>
+                    <button class="close-modal" onclick="closeModal('modalNovaTarefa')">×</button>
+                </div>
+                
+                <form>
+                    <div class="form-section">
+                        <h3>Informações Básicas</h3>
+                        <div class="form-grid">
+                            <div class="form-group full-width">
+                                <label>Título da Tarefa *</label>
+                                <input type="text" placeholder="Digite um título breve e descritivo" required>
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Descrição Detalhada *</label>
+                                <textarea rows="4" placeholder="Descreva os requisitos e detalhes da implementação..." required></textarea>
+                            </div>
+                        </div>
+                    </div>
 
+                    <div class="form-section">
+                        <h3>Prioridade e Prazos</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Prioridade *</label>
+                                <select required>
+                                    <option value="">Selecione...</option>
+                                    <option value="low">Baixa</option>
+                                    <option value="medium">Média</option>
+                                    <option value="high">Alta</option>
+                                    <option value="critical">Altíssima</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Status Inicial *</label>
+                                <select required>
+                                    <option value="open">Aberta</option>
+                                    <option value="development">Em Desenvolvimento</option>
+                                    <option value="testing">Em Testes</option>
+                                    <option value="review">Em Revisão</option>
+                                    <option value="done">Concluída</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Data de Início *</label>
+                                <input type="date" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Data de Término *</label>
+                                <input type="date" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Tecnologias</h3>
+                        <div class="form-grid">
+                            <div class="form-group full-width">
+                                <label>Tecnologias Utilizadas</label>
+                                <input type="text" placeholder="Ex: React, Node.js, MongoDB (separados por vírgula)">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Equipe</h3>
+                        <div class="form-grid">
+                            <div class="form-group full-width">
+                                <label>Usuários Responsáveis *</label>
+                                <select multiple style="height: 120px;" required>
+                                    <option value="1">Carlos Mendes - Desenvolvedor Sênior</option>
+                                    <option value="2">Mariana Souza - Designer UX/UI</option>
+                                    <option value="3">Pedro Santos - Desenvolvedor Junior</option>
+                                    <option value="4">Julia Oliveira - Analista de Testes</option>
+                                </select>
+                                <small style="color: #64748b; font-size: 12px; margin-top: 4px;">Segure Ctrl/Cmd para selecionar múltiplos usuários. Apenas gerentes podem adicionar usuários.</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="button" class="button-secondary" onclick="closeModal('modalNovaTarefa')">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="button-primary">
+                            💾 Criar Tarefa
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Detalhe da Tarefa -->
+    <div id="modalDetalheTarefa" class="modal">
+        <div class="modal-content">
+            <div class="modal-main">
+                <div class="modal-header">
+                    <h2>Implementar autenticação JWT</h2>
+                    <button class="close-modal" onclick="closeModal('modalDetalheTarefa')">×</button>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <span class="task-badge badge-priority-high" style="font-size: 12px;">Alta Prioridade</span>
+                    <span class="task-badge" style="background: #dbeafe; color: #1e40af; margin-left: 8px;">Aberta</span>
+                </div>
+                
+                <div class="form-section">
+                    <h3>Descrição</h3>
+                    <p style="color: #475569; line-height: 1.7;">
+                        Desenvolver sistema de autenticação seguro usando JSON Web Tokens (JWT). O sistema deve permitir login, logout, refresh tokens e validação de permissões. Implementar middleware de autenticação para proteger rotas sensíveis e garantir que apenas usuários autenticados tenham acesso.
+                    </p>
+                </div>
+
+                <div class="form-section">
+                    <h3>Tecnologias</h3>
+                    <div class="task-tech">
+                        <span class="tech-tag">Node.js</span>
+                        <span class="tech-tag">JWT</span>
+                        <span class="tech-tag">Express</span>
+                        <span class="tech-tag">bcrypt</span>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Responsáveis</h3>
+                    <div style="display: flex; gap: 12px; align-items: center;">
+                        <div class="assignee-avatar" style="width: 40px; height: 40px; font-size: 16px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">CM</div>
+                        <div>
+                            <div style="font-weight: 600; color: #1e293b;">Carlos Mendes</div>
+                            <div style="font-size: 13px; color: #64748b;">Desenvolvedor Sênior</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 12px; align-items: center; margin-top: 12px;">
+                        <div class="assignee-avatar" style="width: 40px; height: 40px; font-size: 16px; background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">PS</div>
+                        <div>
+                            <div style="font-weight: 600; color: #1e293b;">Pedro Santos</div>
+                            <div style="font-size: 13px; color: #64748b;">Desenvolvedor Junior</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seção de Comentários -->
+                <div class="comments-section">
+                    <h3>💬 Comentários (3)</h3>
+                    
+                    <div class="comment-input">
+                        <textarea placeholder="Adicionar comentário..."></textarea>
+                        <button class="button-primary" style="height: fit-content;">Enviar</button>
+                    </div>
+
+                    <div class="comment-item">
+                        <div class="comment-avatar" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">AC</div>
+                        <div class="comment-content">
+                            <div class="comment-header">
+                                <span class="comment-author">Ana Costa</span>
+                                <span class="comment-time">Há 2 horas</span>
+                            </div>
+                            <div class="comment-text">
+                                Pessoal, certifiquem-se de implementar a renovação automática de tokens. É essencial para a experiência do usuário.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="comment-item">
+                        <div class="comment-avatar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">CM</div>
+                        <div class="comment-content">
+                            <div class="comment-header">
+                                <span class="comment-author">Carlos Mendes</span>
+                                <span class="comment-time">Há 1 hora</span>
+                            </div>
+                            <div class="comment-text">
+                                Certo, Ana! Vou usar a biblioteca jsonwebtoken e configurar refresh tokens com expiração de 7 dias.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="comment-item">
+                        <div class="comment-avatar" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">PS</div>
+                        <div class="comment-content">
+                            <div class="comment-header">
+                                <span class="comment-author">Pedro Santos</span>
+                                <span class="comment-time">Há 30 minutos</span>
+                            </div>
+                            <div class="comment-text">
+                                Vou trabalhar na parte de validação e tratamento de erros. Já comecei a estudar a documentação!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="button-secondary" onclick="closeModal('modalDetalheTarefa')">
+                        Fechar
+                    </button>
+                    <button type="button" class="button-primary">
+                        ✏️ Editar Tarefa
+                    </button>
+                </div>
+            </div>
+
+            <div class="modal-sidebar">
+                <div class="sidebar-section">
+                    <h4>Informações</h4>
+                    <div class="sidebar-item">
+                        <label>Status</label>
+                        <span class="value">Aberta</span>
+                    </div>
+                    <div class="sidebar-item">
+                        <label>Prioridade</label>
+                        <span class="value">Alta</span>
+                    </div>
+                    <div class="sidebar-item">
+                        <label>Projeto</label>
+                        <span class="value">Sistema ERP</span>
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <h4>Prazos</h4>
+                    <div class="sidebar-item">
+                        <label>Início</label>
+                        <span class="value">05 Dez</span>
+                    </div>
+                    <div class="sidebar-item">
+                        <label>Término</label>
+                        <span class="value">15 Dez</span>
+                    </div>
+                    <div class="sidebar-item">
+                        <label>Duração</label>
+                        <span class="value">10 dias</span>
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <h4>Atividade</h4>
+                    <div class="sidebar-item">
+                        <label>Criado por</label>
+                        <span class="value">Ana Costa</span>
+                    </div>
+                    <div class="sidebar-item">
+                        <label>Criado em</label>
+                        <span class="value">04 Dez</span>
+                    </div>
+                    <div class="sidebar-item">
+                        <label>Atualizado</label>
+                        <span class="value">Há 2 horas</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Relatório -->
+    <div id="modalRelatorio" class="modal">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-main" style="padding: 30px;">
+                <div class="modal-header">
+                    <h2>Gerar Relatório de Tarefas</h2>
+                    <button class="close-modal" onclick="closeModal('modalRelatorio')">×</button>
+                </div>
+                
+                <form>
+                    <div class="form-section">
+                        <h3>Configurações do Relatório</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Tipo de Relatório</label>
+                                <select>
+                                    <option>Andamento das Tarefas</option>
+                                    <option>Tarefas por Status</option>
+                                    <option>Tarefas por Prioridade</option>
+                                    <option>Tarefas por Responsável</option>
+                                    <option>Relatório Completo</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Projeto</label>
+                                <select>
+                                    <option>Todos os Projetos</option>
+                                    <option>Sistema ERP</option>
+                                    <option>App Mobile</option>
+                                    <option>Portal Web</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Período - De</label>
+                                <input type="date">
+                            </div>
+                            <div class="form-group">
+                                <label>Período - Até</label>
+                                <input type="date">
+                            </div>
+                            <div class="form-group">
+                                <label>Formato</label>
+                                <select>
+                                    <option>PDF</option>
+                                    <option>Excel (XLSX)</option>
+                                    <option>CSV</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Incluir Gráficos</label>
+                                <select>
+                                    <option value="yes">Sim</option>
+                                    <option value="no">Não</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="button" class="button-secondary" onclick="closeModal('modalRelatorio')">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="button-primary">
+                            📊 Gerar Relatório
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function switchView(view) {
+            const boardView = document.getElementById('board-view');
+            const listView = document.getElementById('list-view');
+            const buttons = document.querySelectorAll('.view-btn');
+
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            if (view === 'board') {
+                boardView.style.display = 'flex';
+                listView.classList.remove('active');
+                buttons[0].classList.add('active');
+            } else {
+                boardView.style.display = 'none';
+                listView.classList.add('active');
+                buttons[1].classList.add('active');
+            }
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        }
+    </script>
 </body>
 </html>

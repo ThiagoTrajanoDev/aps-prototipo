@@ -1,42 +1,1086 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projetos - SCPE</title>
     <link rel="stylesheet" href="../global.css">
+    <style>
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            color: #1e293b;
+            margin: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .button-primary {
+            background: #2563eb;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+
+        .button-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .button-secondary {
+            background: white;
+            color: #475569;
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .button-secondary:hover {
+            background: #f8fafc;
+            border-color: #94a3b8;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 1px 4px rgba(0,0,0,0.08);
+            border-left: 4px solid #2563eb;
+        }
+
+        .stat-card h3 {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .filter-bar {
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0px 1px 4px rgba(0,0,0,0.08);
+        }
+
+        .filter-label {
+            font-size: 14px;
+            color: #475569;
+            font-weight: 500;
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 13px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 4px;
+            background: #f1f5f9;
+            padding: 4px;
+            border-radius: 8px;
+            margin-left: auto;
+        }
+
+        .view-btn {
+            background: transparent;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #64748b;
+            transition: all 0.2s;
+        }
+
+        .view-btn.active {
+            background: white;
+            color: #2563eb;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .project-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .project-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+            border-color: #2563eb;
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 16px;
+        }
+
+        .project-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        .project-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .project-description {
+            font-size: 14px;
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 16px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .project-meta {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .meta-icon {
+            font-size: 16px;
+        }
+
+        .project-progress {
+            margin-bottom: 16px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .progress-label-text {
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .progress-label-value {
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2563eb 0%, #7c3aed 100%);
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+
+        .project-team {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-top: 16px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .team-avatars {
+            display: flex;
+        }
+
+        .team-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 12px;
+            border: 2px solid white;
+            margin-left: -12px;
+        }
+
+        .team-avatar:first-child {
+            margin-left: 0;
+        }
+
+        .team-info {
+            flex: 1;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge-active {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-planning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-paused {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .badge-completed {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .project-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-icon {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            color: #64748b;
+            transition: all 0.2s;
+            font-size: 16px;
+        }
+
+        .btn-icon:hover {
+            background: #f1f5f9;
+            color: #2563eb;
+        }
+
+        /* List View */
+        .projects-list {
+            display: none;
+        }
+
+        .projects-list.active {
+            display: block;
+        }
+
+        .projects-list table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .projects-list thead {
+            background: #f8fafc;
+        }
+
+        .projects-list th {
+            text-align: left;
+            padding: 12px 16px;
+            font-weight: 600;
+            color: #475569;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .projects-list td {
+            padding: 14px 16px;
+            border-top: 1px solid #e2e8f0;
+            color: #334155;
+        }
+
+        .projects-list tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 700px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+            color: #1e293b;
+            margin: 0;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #64748b;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+        }
+
+        .close-modal:hover {
+            color: #1e293b;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #475569;
+            margin-bottom: 6px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #e2e8f0;
+        }
+    </style>
 </head>
 <body>
     <div class="header">
-    <span class="header-title">
-        Sistema de Controle de Projetos em Equipe – Protótipo
-    </span>
-</div>
-  <div class="sidebar">
-    <a href="../index.html">🏠 Início</a>
-    <a href="equipes.html">👥 Equipes</a>
-    <a href="usuarios.html">👤 Usuários</a>
-    <a href="projetos.html">📁 Projetos</a>
-    <a href="tarefas.html">📌 Tarefas</a>
-    <a href="comunicacao.html">💬 Comunicação</a>
-    <a href="orcamento.html">💰 Orçamento</a>
-    <a href="relatorios.html">📊 Relatórios</a>
-</div>
-
-
-<div class="content">
-    <h2>Projetos</h2>
-
-    <div class="card">
-        <button class="button">Criar Novo Projeto</button>
+        <span class="header-title">
+            Sistema de Controle de Projetos em Equipe – Protótipo
+        </span>
     </div>
 
-    <div class="card">
-        <h3>Projetos Ativos</h3>
-        <ul>
-            <li>Sistema X — Gerente: Carlos</li>
-            <li>Aplicativo Y — Gerente: Ana</li>
-        </ul>
+    <div class="sidebar">
+        <a href="../index.html">🏠 Início</a>
+        <a href="equipes.html">👥 Equipes</a>
+        <a href="usuarios.html">👤 Usuários</a>
+        <a href="projetos.html" style="background: #1e293b; color: #fff;">📁 Projetos</a>
+        <a href="tarefas.html">📌 Tarefas</a>
+        <a href="comunicacao.html">💬 Comunicação</a>
+        <a href="orcamento.html">💰 Orçamento</a>
+        <a href="relatorios.html">📊 Relatórios</a>
     </div>
-</div>
 
+    <div class="content">
+        <div class="page-header">
+            <h1>📁 Gerenciamento de Projetos</h1>
+            <div class="header-actions">
+                <button class="button-primary" onclick="openModal('modalNovoProjeto')">
+                    ➕ Novo Projeto
+                </button>
+                <button class="button-secondary">
+                    📊 Relatório Geral
+                </button>
+            </div>
+        </div>
+
+        <!-- Estatísticas -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total de Projetos</h3>
+                <div class="value">12</div>
+            </div>
+            <div class="stat-card" style="border-left-color: #10b981;">
+                <h3>Projetos Ativos</h3>
+                <div class="value">8</div>
+            </div>
+            <div class="stat-card" style="border-left-color: #f59e0b;">
+                <h3>Em Planejamento</h3>
+                <div class="value">3</div>
+            </div>
+            <div class="stat-card" style="border-left-color: #6366f1;">
+                <h3>Concluídos</h3>
+                <div class="value">1</div>
+            </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="filter-bar">
+            <span class="filter-label">Filtros:</span>
+            <select class="filter-select">
+                <option value="">Todos os Status</option>
+                <option value="active">Ativos</option>
+                <option value="planning">Em Planejamento</option>
+                <option value="paused">Pausados</option>
+                <option value="completed">Concluídos</option>
+            </select>
+            <select class="filter-select">
+                <option value="">Todos os Gerentes</option>
+                <option value="1">Ana Costa</option>
+                <option value="2">João Silva</option>
+            </select>
+            <input type="text" class="search-input" placeholder="🔍 Buscar projetos...">
+            <div class="view-toggle">
+                <button class="view-btn active" onclick="switchView('grid')">⊞ Grade</button>
+                <button class="view-btn" onclick="switchView('list')">☰ Lista</button>
+            </div>
+        </div>
+
+        <!-- Grid View -->
+        <div id="grid-view" class="projects-grid">
+            <div class="project-card" onclick="openModal('modalDetalheProjeto')">
+                <div class="project-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    💼
+                </div>
+                <div class="project-header">
+                    <div style="flex: 1;">
+                        <div class="project-title">Sistema ERP</div>
+                        <span class="badge badge-active">Em Andamento</span>
+                    </div>
+                    <div class="project-actions">
+                        <button class="btn-icon" title="Editar">✏️</button>
+                        <button class="btn-icon" title="Configurações">⚙️</button>
+                    </div>
+                </div>
+                <div class="project-description">
+                    Sistema completo de gestão empresarial com módulos de financeiro, estoque, vendas e recursos humanos.
+                </div>
+                <div class="project-meta">
+                    <div class="meta-item">
+                        <span class="meta-icon">👤</span>
+                        <span>Ana Costa</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-icon">📅</span>
+                        <span>Jun - Dez 2025</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-icon">💰</span>
+                        <span>R$ 850K</span>
+                    </div>
+                </div>
+                <div class="project-progress">
+                    <div class="progress-label">
+                        <span class="progress-label-text">Progresso</span>
+                        <span class="progress-label-value">65%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 65%;"></div>
+                    </div>
+                </div>
+                <div class="project-team">
+                    <div class="team-avatars">
+                        <div class="team-avatar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">CM</div>
+                        <div class="team-avatar" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">MS</div>
+                        <div class="team-avatar" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">PS</div>
+                        <div class="team-avatar" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">+3</div>
+                    </div>
+                    <div class="team-info">6 membros</div>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    📱
+                </div>
+                <div class="project-header">
+                    <div style="flex: 1;">
+                        <div class="project-title">App Mobile</div>
+                        <span class="badge badge-active">Em Andamento</span>
+                    </div>
+                    <div class="project-actions">
+                        <button class="btn-icon" title="Editar">✏️</button>
+                        <button class="btn-icon" title="Configurações">⚙️</button>
+                    </div>
+                </div>
+                <div class="project-description">
+                    Aplicativo mobile para iOS e Android com recursos de geolocalização e notificações push.
+                </div>
+                <div class="project-meta">
+                    <div class="meta-item">
+                        <span class="meta-icon">👤</span>
+                        <span>Ana Costa</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-icon">📅</span>
+                        <span>Ago - Nov 2025</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-icon">💰</span>
+                        <span>R$ 420K</span>
+                    </div>
+                </div>
+                <div class="project-progress">
+                    <div class="progress-label">
+                        <span class="progress-label-text">Progresso</span>
+                        <span class="progress-label-value">82%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 82%;"></div>
+                    </div>
+                </div>
+                <div class="project-team">
+                    <div class="team-avatars">
+                        <div class="team-avatar" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">MS</div>
+                        <div class="team-avatar" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">PS</div>
+                        <div class="team-avatar" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">JO</div>
+                        <div class="team-avatar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">+1</div>
+                    </div>
+                    <div class="team-info">4 membros</div>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                    🌐
+                </div>
+                <div class="project-header">
+                    <div style="flex: 1;">
+                        <div class="project-title">Portal Web</div>
+                        <span class="badge badge-planning">Planejamento</span>
+                    </div>
+                    <div class="project-actions">
+                        <button class="btn-icon" title="Editar">✏️</button>
+                        <button class="btn-icon" title="Configurações">⚙️</button>
+                    </div>
+                </div>
+                <div class="project-description">
+                    Portal web institucional com área de clientes, blog e sistema de tickets de suporte.
+                </div>
+                <div class="project-meta">
+                    <div class="meta-item">
+                        <span class="meta-icon">👤</span>
+                        <span>João Silva</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-icon">📅</span>
+                        <span>Jan - Abr 2026</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-icon">💰</span>
+                        <span>R$ 280K</span>
+                    </div>
+                </div>
+                <div class="project-progress">
+                    <div class="progress-label">
+                        <span class="progress-label-text">Progresso</span>
+                        <span class="progress-label-value">15%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 15%; background: linear-gradient(90deg, #f59e0b 0%, #ef4444 100%);"></div>
+                    </div>
+                </div>
+                <div class="project-team">
+                    <div class="team-avatars">
+                        <div class="team-avatar" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">MS</div>
+                        <div class="team-avatar" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">PS</div>
+                        <div class="team-avatar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">+1</div>
+                    </div>
+                    <div class="team-info">3 membros</div>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div class="project-icon" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">
+                    🛒
+                </div>
+                <div class="project-header">
+                    <div style="flex: 1;">
+                        <div class="project-title">E-commerce</div>
+                        <span class="badge badge-active">Em Andamento</span>
+                    </div>
+                    <div class="project-actions">
+                        <button class="btn-icon" title="Editar">✏️</button>
+                        <button class="btn-icon" title="Configurações">⚙️</button>
+                    </div>
+                </div>
+                <div class="project-description">
+                    Plataforma de e-commerce completa com carrinho, pagamentos, gestão de estoque e painel administrativo.
+                </div>
+                <div class="project-meta">
+                    <div class="meta-item">
+                        <span class="meta-icon">👤</span>
+                        <span>Ana Costa</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-icon">📅</span>
+                        <span>Set 2025 - Mar 2026</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-icon">💰</span>
+                        <span>R$ 620K</span>
+                    </div>
+                </div>
+                <div class="project-progress">
+                    <div class="progress-label">
+                        <span class="progress-label-text">Progresso</span>
+                        <span class="progress-label-value">45%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 45%;"></div>
+                    </div>
+                </div>
+                <div class="project-team">
+                    <div class="team-avatars">
+                        <div class="team-avatar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">CM</div>
+                        <div class="team-avatar" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">PS</div>
+                        <div class="team-avatar" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">JO</div>
+                        <div class="team-avatar" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">+2</div>
+                    </div>
+                    <div class="team-info">5 membros</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- List View -->
+        <div id="list-view" class="projects-list">
+            <div class="card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Projeto</th>
+                            <th>Gerente</th>
+                            <th>Status</th>
+                            <th>Progresso</th>
+                            <th>Equipe</th>
+                            <th>Orçamento</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Sistema ERP</strong></td>
+                            <td>Ana Costa</td>
+                            <td><span class="badge badge-active">Em Andamento</span></td>
+                            <td>65%</td>
+                            <td>6 membros</td>
+                            <td>R$ 850.000</td>
+                            <td>
+                                <button class="btn-icon" title="Ver Detalhes">👁️</button>
+                                <button class="btn-icon" title="Editar">✏️</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>App Mobile</strong></td>
+                            <td>Ana Costa</td>
+                            <td><span class="badge badge-active">Em Andamento</span></td>
+                            <td>82%</td>
+                            <td>4 membros</td>
+                            <td>R$ 420.000</td>
+                            <td>
+                                <button class="btn-icon" title="Ver Detalhes">👁️</button>
+                                <button class="btn-icon" title="Editar">✏️</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Portal Web</strong></td>
+                            <td>João Silva</td>
+                            <td><span class="badge badge-planning">Planejamento</span></td>
+                            <td>15%</td>
+                            <td>3 membros</td>
+                            <td>R$ 280.000</td>
+                            <td>
+                                <button class="btn-icon" title="Ver Detalhes">👁️</button>
+                                <button class="btn-icon" title="Editar">✏️</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>E-commerce</strong></td>
+                            <td>Ana Costa</td>
+                            <td><span class="badge badge-active">Em Andamento</span></td>
+                            <td>45%</td>
+                            <td>5 membros</td>
+                            <td>R$ 620.000</td>
+                            <td>
+                                <button class="btn-icon" title="Ver Detalhes">👁️</button>
+                                <button class="btn-icon" title="Editar">✏️</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Novo Projeto -->
+    <div id="modalNovoProjeto" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Criar Novo Projeto</h2>
+                <button class="close-modal" onclick="closeModal('modalNovoProjeto')">×</button>
+            </div>
+            
+            <form>
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label>Nome do Projeto *</label>
+                        <input type="text" placeholder="Digite o nome do projeto" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Descrição</label>
+                        <textarea rows="3" placeholder="Descreva o projeto..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Gerente do Projeto *</label>
+                        <select required>
+                            <option value="">Selecione o gerente</option>
+                            <option value="1">Ana Costa</option>
+                            <option value="2">João Silva</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Status Inicial</label>
+                        <select>
+                            <option value="planning">Em Planejamento</option>
+                            <option value="active">Em Andamento</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Data de Início *</label>
+                        <input type="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Previsão de Término *</label>
+                        <input type="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Orçamento Estimado (R$)</label>
+                        <input type="number" placeholder="0,00" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Prioridade</label>
+                        <select>
+                            <option value="low">Baixa</option>
+                            <option value="medium">Média</option>
+                            <option value="high">Alta</option>
+                        </select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Adicionar Membros à Equipe</label>
+                        <select multiple style="height: 120px;">
+                            <option value="1">Carlos Mendes - Desenvolvedor Sênior</option>
+                            <option value="2">Mariana Souza - Designer UX/UI</option>
+                            <option value="3">Pedro Santos - Desenvolvedor Junior</option>
+                            <option value="4">Julia Oliveira - Analista de Testes</option>
+                        </select>
+                        <small style="color: #64748b; font-size: 12px; margin-top: 4px;">Segure Ctrl/Cmd para selecionar múltiplos membros</small>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="button-secondary" onclick="closeModal('modalNovoProjeto')">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="button-primary">
+                        💾 Criar Projeto
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Detalhe do Projeto -->
+    <div id="modalDetalheProjeto" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h2>Sistema ERP</h2>
+                <button class="close-modal" onclick="closeModal('modalDetalheProjeto')">×</button>
+            </div>
+            
+            <div style="margin-bottom: 24px;">
+                <span class="badge badge-active" style="font-size: 13px;">Em Andamento</span>
+                <span class="badge" style="background: #f1f5f9; color: #475569; margin-left: 8px;">Alta Prioridade</span>
+            </div>
+
+            <div style="margin-bottom: 24px;">
+                <h3 style="font-size: 16px; color: #1e293b; margin-bottom: 12px;">Descrição</h3>
+                <p style="color: #64748b; line-height: 1.7;">
+                    Sistema completo de gestão empresarial com módulos de financeiro, estoque, vendas e recursos humanos. 
+                    Integração com sistemas de pagamento, emissão de notas fiscais e relatórios gerenciais.
+                </p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+                <div>
+                    <h3 style="font-size: 16px; color: #1e293b; margin-bottom: 12px;">Informações</h3>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: #64748b;">Gerente:</span>
+                            <strong style="color: #1e293b;">Ana Costa</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: #64748b;">Início:</span>
+                            <strong style="color: #1e293b;">01 Jun 2025</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: #64748b;">Término:</span>
+                            <strong style="color: #1e293b;">31 Dez 2025</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: #64748b;">Duração:</span>
+                            <strong style="color: #1e293b;">7 meses</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 style="font-size: 16px; color: #1e293b; margin-bottom: 12px;">Orçamento</h3>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: #64748b;">Total:</span>
+                            <strong style="color: #1e293b;">R$ 850.000</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: #64748b;">Gasto Atual:</span>
+                            <strong style="color: #1e293b;">R$ 552.500</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: #64748b;">Disponível:</span>
+                            <strong style="color: #10b981;">R$ 297.500</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: #64748b;">% Utilizado:</span>
+                            <strong style="color: #1e293b;">65%</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 24px;">
+                <h3 style="font-size: 16px; color: #1e293b; margin-bottom: 12px;">Progresso Geral</h3>
+                <div class="progress-bar" style="height: 12px;">
+                    <div class="progress-fill" style="width: 65%;"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 13px; color: #64748b;">
+                    <span>65% Concluído</span>
+                    <span>156 tarefas finalizadas de 240</span>
+                </div>
+            </div>
+
+            <div>
+                <h3 style="font-size: 16px; color: #1e293b; margin-bottom: 12px;">Equipe do Projeto (6 membros)</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #f8fafc; border-radius: 8px;">
+                        <div class="team-avatar" style="width: 40px; height: 40px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">CM</div>
+                        <div>
+                            <div style="font-weight: 600; color: #1e293b; font-size: 14px;">Carlos Mendes</div>
+                            <div style="font-size: 12px; color: #64748b;">Dev Sênior</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #f8fafc; border-radius: 8px;">
+                        <div class="team-avatar" style="width: 40px; height: 40px; background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">MS</div>
+                        <div>
+                            <div style="font-weight: 600; color: #1e293b; font-size: 14px;">Mariana Souza</div>
+                            <div style="font-size: 12px; color: #64748b;">Designer UX/UI</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #f8fafc; border-radius: 8px;">
+                        <div class="team-avatar" style="width: 40px; height: 40px; background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">PS</div>
+                        <div>
+                            <div style="font-weight: 600; color: #1e293b; font-size: 14px;">Pedro Santos</div>
+                            <div style="font-size: 12px; color: #64748b;">Dev Junior</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #f8fafc; border-radius: 8px;">
+                        <div class="team-avatar" style="width: 40px; height: 40px; background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">JO</div>
+                        <div>
+                            <div style="font-weight: 600; color: #1e293b; font-size: 14px;">Julia Oliveira</div>
+                            <div style="font-size: 12px; color: #64748b;">QA Analyst</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="button-secondary" onclick="closeModal('modalDetalheProjeto')">
+                    Fechar
+                </button>
+                <button type="button" class="button-primary">
+                    ✏️ Editar Projeto
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchView(view) {
+            const gridView = document.getElementById('grid-view');
+            const listView = document.getElementById('list-view');
+            const buttons = document.querySelectorAll('.view-btn');
+
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            if (view === 'grid') {
+                gridView.style.display = 'grid';
+                listView.classList.remove('active');
+                buttons[0].classList.add('active');
+            } else {
+                gridView.style.display = 'none';
+                listView.classList.add('active');
+                buttons[1].classList.add('active');
+            }
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        }
+    </script>
 </body>
 </html>
